@@ -3,21 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fff5f7;
+  --foreground: #1f2937;
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%, #ffe4ea 0%, transparent 35%),
+    radial-gradient(circle at 90% 85%, #ffdbe5 0%, transparent 35%),
+    var(--background);
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
 }
 
 @layer utilities {

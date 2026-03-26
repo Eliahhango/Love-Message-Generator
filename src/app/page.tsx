@@ -1,101 +1,124 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo, useState } from "react";
+
+type Tone = "sweet" | "playful" | "poetic";
+
+const templates: Record<Tone, string[]> = {
+  sweet: [
+    "Hey {name}, you make ordinary days feel special. {reason}",
+    "Dear {name}, every moment with you feels like home. {reason}",
+    "{name}, your smile is my favorite part of every day. {reason}",
+  ],
+  playful: [
+    "Breaking news, {name}: you have officially stolen my heart. {reason}",
+    "To {name}: I like you more than coffee, and that is serious. {reason}",
+    "{name}, if love were a game, I would still choose your team. {reason}",
+  ],
+  poetic: [
+    "{name}, in the quiet between heartbeats, I still find your name. {reason}",
+    "If the sky could write, it would write about you, {name}. {reason}",
+    "{name}, your presence turns simple hours into soft light. {reason}",
+  ],
+};
+
+const fallbackReason = {
+  sweet: "Thank you for being exactly who you are.",
+  playful: "You are my favorite kind of chaos.",
+  poetic: "You make my world feel wider and warmer.",
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [name, setName] = useState("");
+  const [reason, setReason] = useState("");
+  const [tone, setTone] = useState<Tone>("sweet");
+  const [message, setMessage] = useState(
+    "Write a name, pick a tone, and generate a love message."
+  );
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const toneLabel = useMemo(() => {
+    if (tone === "sweet") return "Sweet";
+    if (tone === "playful") return "Playful";
+    return "Poetic";
+  }, [tone]);
+
+  function generateMessage() {
+    const selected = templates[tone];
+    const template = selected[Math.floor(Math.random() * selected.length)];
+
+    const finalName = name.trim() || "love";
+    const finalReason = reason.trim() || fallbackReason[tone];
+
+    setMessage(
+      template
+        .replace("{name}", finalName)
+        .replace("{reason}", finalReason)
+    );
+  }
+
+  return (
+    <main className="min-h-screen px-5 py-10 sm:px-8 sm:py-14">
+      <section className="mx-auto w-full max-w-3xl rounded-3xl border border-rose-200/60 bg-white/80 p-6 shadow-xl shadow-rose-100 backdrop-blur-sm sm:p-10">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-500">
+          Love Message Generator
+        </p>
+        <h1 className="mt-2 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
+          Create heartfelt messages in one click
+        </h1>
+
+        <div className="mt-8 grid gap-5">
+          <label className="grid gap-2">
+            <span className="text-sm font-medium text-slate-700">Name</span>
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="e.g. Alex"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </label>
+
+          <label className="grid gap-2">
+            <span className="text-sm font-medium text-slate-700">
+              Why you love them
+            </span>
+            <textarea
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+              rows={4}
+              placeholder="Tell one thing you adore about them"
+              className="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+            />
+          </label>
+
+          <label className="grid gap-2">
+            <span className="text-sm font-medium text-slate-700">Tone</span>
+            <select
+              value={tone}
+              onChange={(event) => setTone(event.target.value as Tone)}
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+            >
+              <option value="sweet">Sweet</option>
+              <option value="playful">Playful</option>
+              <option value="poetic">Poetic</option>
+            </select>
+          </label>
+
+          <button
+            type="button"
+            onClick={generateMessage}
+            className="mt-2 rounded-xl bg-rose-500 px-5 py-3 font-semibold text-white transition hover:bg-rose-600 active:scale-[0.99]"
           >
-            Read our docs
-          </a>
+            Generate {toneLabel} Message
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <article className="mt-8 rounded-2xl border border-rose-100 bg-rose-50 p-5 sm:p-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-rose-700">
+            Your message
+          </h2>
+          <p className="mt-3 text-lg leading-relaxed text-slate-800">{message}</p>
+        </article>
+      </section>
+    </main>
   );
 }
